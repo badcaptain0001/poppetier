@@ -68,19 +68,16 @@ const medicineSchema = new mongoose.Schema({
         const data3 = await page.evaluate(() => {
             let anchors = Array.from(document.querySelectorAll('.ga-vertical-gallery .slider-main div img')) === (undefined || null) ? '' : Array.from(document.querySelectorAll('.ga-vertical-gallery .slider-main div img'));
             return ({
-                medicineName: document.querySelector('.drug-name')?.innerText,
-                medicineType: document.querySelector('.drug-type')?.innerText,
-                medicineCompany: document.querySelector('.drug-company')?.innerText,
-                medicinePrice: document.querySelector('.drug-price')?.innerText,
-                medicineQuantity: document.querySelector('.drug-quantity')?.innerText,
-                medicineImage: anchors.map(anchor => anchor.src),
-                medicineLeaf: document.querySelector('.drug-leaf')?.innerText,
-                medicineId: document.querySelector('.drug-id')?.innerText,
-                dateOfRegistration: document.querySelector('.drug-registration')?.innerText,
-                dateOfUpdate: document.querySelector('.drug-update')?.innerText,
-                medicineDescription: document.querySelector('.drug-description')?.innerText,
-                rxRequired: document.querySelector('.drug-rx')?.innerText === 'Rx Required' ? true : false,
-                disease: document.querySelector('.drug-disease')?.innerText,
+                medicineName: document.querySelector('.product-top .product-detail h1')?.innerText,
+                disease: document.querySelector('.product-top .product-detail .gen_drug')?.innerText,
+                rxRequired: document.querySelector('.req_Rx')?.innerText === "Rx required" ? true : false,
+                medicineType: document.querySelector('.product-top .product-detail .drug-manu')?.innerText,
+                medicinePrice: parseInt(document.querySelector('.product-top .essentials .price-box .final-price')?.innerText.replace('Best Price* ₹ ', '')),
+                medicineCompany: document.querySelector('.product-top .essentials .drug-con .drug-manu')?.innerText.replace('* Mkt: ', ''),
+                medicineDescription: document.querySelector('.drug-content .product_desc_info')?.innerText.substring(document.querySelector('.drug-content .product_desc_info').innerText.indexOf('INTRODUCTION') + 12, document.querySelector('.drug-content .product_desc_info').innerText.indexOf('USES OF')).replace(/\\n/g," "),
+                medicineImage:  [...new Set(anchors.map(anchor => anchor.src))],
+                medicineId: "MED" + Math.floor(Math.random().toString().substring(2, 10)),
+                dateOfRegistration: new Date().toISOString(),
             })
         });
         for(let j = 0; j < data3.medicineImage.length; j++) {
@@ -129,7 +126,7 @@ const medicineSchema = new mongoose.Schema({
             dateOfRegistration: data3.dateOfRegistration,
         });
         await medicine.save();
-        console.log("data saved");
+        console.log("Count",i);
     }
     console.log(name.length);
     console.log("Please Close the server");
